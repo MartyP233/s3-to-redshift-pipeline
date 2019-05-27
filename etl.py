@@ -20,12 +20,15 @@ def insert_tables(cur, conn):
 
 
 def main():
+    # Load configuration info
     config = configparser.ConfigParser()
     config.read('dwh.cfg')
 
+    # Connect to redshift cluster
     conn = psycopg2.connect(f"host={config['DWH']['DWH_ENDPOINT']} dbname={config['DWH']['DWH_DB']} user={config['DWH']['DWH_DB_USER']} password={config['DWH']['DWH_DB_PASSWORD']} port={config['DWH']['DWH_PORT']}")
     cur = conn.cursor()
 
+    # load data into staging and insert into star schema
     load_staging_tables(cur, conn)
     insert_tables(cur, conn)
 

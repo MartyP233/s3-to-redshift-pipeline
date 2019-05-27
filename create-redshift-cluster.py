@@ -24,6 +24,7 @@ DWH_IAM_ROLE_NAME = config.get("DWH", "DWH_IAM_ROLE_NAME")
 
 (DWH_DB_USER, DWH_DB_PASSWORD, DWH_DB)
 
+# Display Conifg info
 pd.DataFrame(
     {
         "Param": [
@@ -95,18 +96,18 @@ print(roleArn)
 
 try:
     response = redshift.create_cluster(        
-        #HW
+        # HW
         ClusterType=DWH_CLUSTER_TYPE,
         NodeType=DWH_NODE_TYPE,
         NumberOfNodes=int(DWH_NUM_NODES),
 
-        #Identifiers & Credentials
+        # Identifiers & Credentials
         DBName=DWH_DB,
         ClusterIdentifier=DWH_CLUSTER_IDENTIFIER,
         MasterUsername=DWH_DB_USER,
         MasterUserPassword=DWH_DB_PASSWORD,
         
-        #Roles (for s3 access)
+        # Roles (for s3 access)
         IamRoles=[roleArn]  
     )
 except Exception as e:
@@ -119,6 +120,7 @@ def prettyRedshiftProps(props):
     keysToShow = ["ClusterIdentifier", "NodeType", "ClusterStatus", "MasterUsername", "DBName", "Endpoint", "NumberOfNodes", 'VpcId']
     x = [(k, v) for k,v in props.items() if k in keysToShow]
     return pd.DataFrame(data=x, columns=["Key", "Value"])
+
 
 myClusterProps = redshift.describe_clusters(ClusterIdentifier=DWH_CLUSTER_IDENTIFIER)['Clusters'][0]
 prettyRedshiftProps(myClusterProps)
@@ -156,10 +158,7 @@ except Exception as e:
 
 # Connect to cluster
 
-conn_string=f"postgresql://{DWH_DB_USER}:{DWH_DB_PASSWORD}@{DWH_ENDPOINT}:{DWH_PORT}/{DWH_DB}"
-
-con=psycopg2.connect(f"dbname={DWH_DB} host={DWH_ENDPOINT} port={DWH_PORT} user={DWH_DB_USER} password={DWH_DB_PASSWORD}")
-
+con = psycopg2.connect(f"dbname={DWH_DB} host={DWH_ENDPOINT} port={DWH_PORT} user={DWH_DB_USER} password={DWH_DB_PASSWORD}")
 
 # Clean up resources
 
@@ -172,7 +171,7 @@ redshift.delete_cluster(ClusterIdentifier=DWH_CLUSTER_IDENTIFIER, SkipFinalClust
 myClusterProps = redshift.describe_clusters(ClusterIdentifier=DWH_CLUSTER_IDENTIFIER)['Clusters'][0]
 prettyRedshiftProps(myClusterProps)
 
-# Delete roles 
+# Delete roles
 
 iam.detach_role_policy(RoleName=DWH_IAM_ROLE_NAME, PolicyArn="arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess")
 iam.delete_role(RoleName=DWH_IAM_ROLE_NAME)

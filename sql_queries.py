@@ -115,7 +115,7 @@ CREATE TABLE IF NOT EXISTS time (start_time text PRIMARY KEY
                                 ,weekday text);
 """)
 
-# STAGING TABLES
+# LOAD DATA INTO STAGING TABLES
 
 staging_events_copy = (f"""
 COPY staging_events
@@ -133,7 +133,7 @@ region 'us-west-2'
 FORMAT AS JSON 'auto'
 """)
 
-# FINAL TABLES
+# INSERT DATA INTO FINAL TABLES
 
 songplay_table_insert = ("""
 INSERT INTO songplays (start_time, user_id, level, song_id, artist_id, session_id, location, user_agent)
