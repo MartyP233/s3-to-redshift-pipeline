@@ -71,7 +71,7 @@ CREATE TABLE staging_songs (num_songs int
 
 songplay_table_create = ("""
 CREATE TABLE IF NOT EXISTS songplays (songplay_id int IDENTITY(0,1) PRIMARY KEY
-                                    ,start_time date NOT NULL
+                                    ,start_time timestamp NOT NULL
                                     ,user_id int NOT NULL
                                     ,level text
                                     ,song_id text
@@ -106,13 +106,13 @@ CREATE TABLE IF NOT EXISTS artists (artist_id text PRIMARY KEY
 """)
 
 time_table_create = ("""
-CREATE TABLE IF NOT EXISTS time (start_time text PRIMARY KEY
-                                ,hour text
-                                ,day text
-                                ,week text
-                                ,month text
-                                ,year text
-                                ,weekday text);
+CREATE TABLE IF NOT EXISTS time (start_time timestamp PRIMARY KEY
+                                ,hour int
+                                ,day int
+                                ,week int
+                                ,month int
+                                ,year int
+                                ,weekday int);
 """)
 
 # LOAD DATA INTO STAGING TABLES
